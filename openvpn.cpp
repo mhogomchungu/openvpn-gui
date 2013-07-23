@@ -62,22 +62,22 @@ void openvpn::run()
 	m_menu = new KMenu() ;
 
 	QAction * ac = new QAction( m_menu ) ;
-	ac->setText( "start VPN session" ) ;
+	ac->setText( tr( "Start VPN session" ) ) ;
 	m_menu->addAction( ac ) ;
 	connect( ac,SIGNAL( triggered() ),this,SLOT( startProcess() ) ) ;
 
 	ac = new QAction( m_menu ) ;
-	ac->setText( "start VPN session" ) ;
+	ac->setText( tr( "Stop VPN session" ) ) ;
+	m_menu->addAction( ac ) ;
+	connect( ac,SIGNAL( triggered() ),this,SLOT( stopProcess() ) ) ;
+
+	ac = new QAction( m_menu ) ;
+	ac->setText( tr( "Show log output" ) ) ;
 	m_menu->addAction( ac ) ;
 	connect( ac,SIGNAL( triggered() ),this,SLOT( showLogOutPut() ) ) ;
 
 	ac = new QAction( m_menu ) ;
-	ac->setText( "show log output" ) ;
-	m_menu->addAction( ac ) ;
-	connect( ac,SIGNAL( triggered() ),this,SLOT( showLogOutPut() ) ) ;
-
-	ac = new QAction( m_menu ) ;
-	ac->setText( "exit" ) ;
+	ac->setText( tr( "Exit" ) ) ;
 	m_menu->addAction( ac ) ;
 	connect( ac,SIGNAL( triggered() ),this,SLOT( exitApplication() ) ) ;
 
@@ -179,7 +179,7 @@ QString openvpn::getConfigFile()
 		}
 	}
 
-	qDebug() << "quitting there are no config file to use" ;
+	qDebug() << tr( "quitting there are no config file to use" ) ;
 
 	this->exitApplication() ;
 	return QString( "" ) ;
@@ -191,12 +191,12 @@ void openvpn::setVPNstate()
 		QString icon = "object-locked.png" ;
 		KStatusNotifierItem::setIconByName( icon );
 		KStatusNotifierItem::setAttentionIconByName( icon ) ;
-		KStatusNotifierItem::setToolTip( icon,tr( "status" ),tr( "VPN tunnel is running" ) ) ;
+		KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "VPN tunnel is running" ) ) ;
 	}else{
 		QString icon = "object-unlocked.png" ;
 		KStatusNotifierItem::setIconByName( icon );
 		KStatusNotifierItem::setAttentionIconByName( icon ) ;
-		KStatusNotifierItem::setToolTip( icon,tr( "status" ),tr( "VPN tunnel is not running" ) ) ;
+		KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "VPN tunnel is not running" ) ) ;
 	}
 }
 
