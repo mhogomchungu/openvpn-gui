@@ -83,7 +83,7 @@ void openvpn::run()
 
 	KStatusNotifierItem::setContextMenu( m_menu ) ;
 
-	m_processIsRunning = false ;\
+	m_processIsRunning = false ;
 
 	this->setVPNstate() ;
 
@@ -122,7 +122,7 @@ void openvpn::startProcess()
 
 	connect( m_process,SIGNAL( finished( int,QProcess::ExitStatus ) ),this,SLOT( finished( int,QProcess::ExitStatus ) ) ) ;
 
-	m_process->setWorkingDirectory( "/home/ink/qqq" ) ;
+	m_process->setWorkingDirectory( QDir::homePath() + "/.openvpn" ) ;
 
 	m_processIsRunning = true ;
 
@@ -153,6 +153,8 @@ void openvpn::finished( int i,QProcess::ExitStatus s )
 	Q_UNUSED( s ) ;
 	m_process->deleteLater() ;
 	m_process = 0 ;
+	m_processIsRunning = false ;
+	this->setVPNstate() ;
 }
 
 void openvpn::exitApplication()
