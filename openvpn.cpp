@@ -19,7 +19,6 @@
 
 
 #include "openvpn.h"
-#include "ui_openvpn.h"
 
 openvpn::openvpn()
 {

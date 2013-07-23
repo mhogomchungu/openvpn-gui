@@ -26,7 +26,7 @@
 #include <QDir>
 #include <QStringList>
 #include <QMetaObject>
-
+#include <QCoreApplication>
 #include <kstatusnotifieritem.h>
 #include <kmenu.h>
 
