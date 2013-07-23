@@ -126,7 +126,7 @@ void openvpn::startProcess()
 
 	m_processIsRunning = true ;
 
-	QString arg = "/usr/bin/openvpn-cli " + this->getConfigFile() ;
+	QString arg = QString( OPEN_VPN_CLI_PATH ) + QString( " " ) + this->getConfigFile() ;
 
 	m_process->start( arg,QIODevice::ReadOnly ) ;
 
@@ -183,6 +183,11 @@ QString openvpn::getConfigFile()
 
 	qDebug() << tr( "quitting there are no config file to use" ) ;
 
+	QString icon = "security-low.png" ;
+	KStatusNotifierItem::setIconByName( icon );
+	KStatusNotifierItem::setAttentionIconByName( icon ) ;
+	KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "could not find openvpn configuration file to use" ) ) ;
+	
 	this->exitApplication() ;
 	return QString( "" ) ;
 }
@@ -190,15 +195,15 @@ QString openvpn::getConfigFile()
 void openvpn::setVPNstate()
 {
 	if( m_processIsRunning ){
-		QString icon = "object-locked.png" ;
+		QString icon = "security-high.png" ;
 		KStatusNotifierItem::setIconByName( icon );
 		KStatusNotifierItem::setAttentionIconByName( icon ) ;
 		KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "VPN tunnel is running" ) ) ;
 	}else{
-		QString icon = "object-unlocked.png" ;
+		QString icon = "security-low.png" ;
 		KStatusNotifierItem::setIconByName( icon );
 		KStatusNotifierItem::setAttentionIconByName( icon ) ;
-		KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "VPN tunnel is not running" ) ) ;
+		KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "VPN tunnel is NOT running" ) ) ;
 	}
 }
 

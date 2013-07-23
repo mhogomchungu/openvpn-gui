@@ -2,6 +2,7 @@
 
 #include "process.h"
 
+#include <grp.h>
 #include <string.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -33,8 +34,10 @@ static void _printProcessOutput( process_t p )
 	char log_path[ 1032 ] ;
 	snprintf( log_path,1032,"/home/%s/.openvpn/output.log",pass->pw_name ) ;
 	
-	int fd = open( log_path,O_CREAT|O_TRUNC|O_WRONLY,S_IRUSR|S_IWUSR) ;
+	int fd = open( log_path,O_CREAT|O_TRUNC|O_WRONLY,S_IRUSR|S_IWUSR ) ;
+	
 	if( fd == -1 ){
+		puts( "failed to open log file" ) ;
 		return ;
 	}
 	
@@ -53,11 +56,85 @@ static void _printProcessOutput( process_t p )
 	close( fd ) ;
 }
 
+static int userIsPrivileged( void )
+{
+	int st = 0 ;
+	
+	const char ** entry ;
+	const char * name   ;
+	
+	uid_t uid = getuid() ;
+	
+	struct group * grp ;
+	
+	struct passwd * pass ;
+	
+	if( uid == 0 ){
+		return 1 ;
+	}
+	
+	pass = getpwuid( uid ) ;
+	
+	if( pass == NULL ){
+		return 0 ;
+	}
+	
+	grp = getgrnam( "openvpn-cli" ) ;
+	
+	if( grp == NULL ){
+		return 0 ;
+	}
+	
+	name  = ( const char * )pass->pw_name ;
+	entry = ( const char ** )grp->gr_mem ;
+	
+	while( *entry != NULL ){
+		if( strcmp( *entry,name ) == 0 ){
+			st = 1 ;
+			break ;
+		}else{
+			entry++ ;
+		}
+	}
+	
+	return st ;
+}
+
+static int writeToLogFile( const char * msg )
+{	
+	struct passwd * pass = getpwuid( getuid() ) ;
+	
+	if( pass == NULL ){
+		return 1 ;
+	}
+	
+	char log_path[ 1032 ] ;
+	snprintf( log_path,1032,"/home/%s/.openvpn/output.log",pass->pw_name ) ;
+	
+	seteuid( getuid() ) ;
+	int fd = open( log_path,O_CREAT|O_TRUNC|O_WRONLY,S_IRUSR|S_IWUSR ) ;
+	seteuid( 0 ) ;
+	
+	if( fd == -1 ){
+		puts( "failed to open log file" ) ;
+	}else{
+		puts( msg ) ;
+		fchmod( fd,444 ) ;
+		write( fd,msg,strlen( msg ) ) ;
+		close( fd ) ;
+	}
+	
+	return 1 ;
+}
+
 int main( int argc,char * argv[] )
 {
 	if( argc != 2 ){
-		printf( "argument to openvpn .ovpn or .config file is missing" ) ;
-		return 1 ;
+		return writeToLogFile( "argument to openvpn .ovpn or .config file is missing" ) ;		
+	}
+	
+	if( !userIsPrivileged() ){
+		return writeToLogFile( "insufficient privileges to run this application.\nMake sure you are a member of group \"openvpn-cli\" and try again" ) ;
 	}
 	
 	/*

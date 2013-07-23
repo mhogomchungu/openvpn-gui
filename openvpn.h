@@ -31,6 +31,7 @@
 #include <kmenu.h>
 
 #include "logwindow.h"
+#include "openvpn_cli_path.h"
 
 class openvpn : public KStatusNotifierItem
 {

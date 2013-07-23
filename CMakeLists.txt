@@ -38,3 +38,46 @@
  install( TARGETS openvpn-gui RUNTIME DESTINATION bin 
 		PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE 
  )
+  
+ install ( FILES ${PROJECT_BINARY_DIR}/openvpn-gui.desktop DESTINATION share/applications 
+ PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE 
+ )
+ 
+ install ( FILES openvpn-gui.png DESTINATION share/icons )
+ 
+ # uninstall target
+ configure_file(
+	 "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+	 "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+	 IMMEDIATE @ONLY )
+ 
+ add_custom_target( uninstall
+ COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake )
+ 
+ file( WRITE "${PROJECT_BINARY_DIR}/openvpn_cli_path.h" "#define OPEN_VPN_CLI_PATH \"${CMAKE_INSTALL_PREFIX}/bin/openvpn-cli\"" )
+ 
+ # desktop file section
+ file( WRITE "${PROJECT_BINARY_DIR}/openvpn-gui.desktop"
+ "#!/usr/bin/env xdg-open
+ [Desktop Entry]
+ Comment[en_US]=
+ Comment=
+ Exec=${CMAKE_INSTALL_PREFIX}/bin/openvpn-gui
+ GenericName[en_US]=a GUI front end to openvpn
+ GenericName=a GUI front end to openvpn
+ Icon=${CMAKE_INSTALL_PREFIX}/share/icons/openvpn-gui.png
+ MimeType=
+ Name[en_US]=openvpn-gui
+ Name=openvpn-gui
+ NoDisplay=false
+ Path=
+ StartupNotify=true
+ Terminal=false
+ TerminalOptions=
+ Type=Application
+ X-DBUS-ServiceName=
+ X-DBUS-StartupType=Unique
+ X-KDE-SubstituteUID=false
+ X-KDE-Username=
+ Categories=X-MandrivaLinux-Internet-RemoteAccess;Network;RemoteAccess;RemoteAccess;\n" )
+ 
