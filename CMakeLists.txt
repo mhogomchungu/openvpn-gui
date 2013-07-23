@@ -58,26 +58,26 @@
  
  # desktop file section
  file( WRITE "${PROJECT_BINARY_DIR}/openvpn-gui.desktop"
- "#!/usr/bin/env xdg-open
- [Desktop Entry]
- Comment[en_US]=
- Comment=
- Exec=${CMAKE_INSTALL_PREFIX}/bin/openvpn-gui
- GenericName[en_US]=a GUI front end to openvpn
- GenericName=a GUI front end to openvpn
- Icon=${CMAKE_INSTALL_PREFIX}/share/icons/openvpn-gui.png
- MimeType=
- Name[en_US]=openvpn-gui
- Name=openvpn-gui
- NoDisplay=false
- Path=
- StartupNotify=true
- Terminal=false
- TerminalOptions=
- Type=Application
- X-DBUS-ServiceName=
- X-DBUS-StartupType=Unique
- X-KDE-SubstituteUID=false
- X-KDE-Username=
- Categories=X-MandrivaLinux-Internet-RemoteAccess;Network;RemoteAccess;RemoteAccess;\n" )
+"#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=${CMAKE_INSTALL_PREFIX}/bin/openvpn-gui
+GenericName[en_US]=a GUI front end to openvpn
+GenericName=a GUI front end to openvpn
+Icon=${CMAKE_INSTALL_PREFIX}/share/icons/openvpn-gui.png
+MimeType=
+Name[en_US]=openvpn-gui
+Name=openvpn-gui
+NoDisplay=false
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=Unique
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+Categories=X-MandrivaLinux-Internet-RemoteAccess;Network;RemoteAccess;Utility;\n" )
  
