@@ -38,6 +38,7 @@ public:
 	explicit logwindow( QWidget * parent = 0 ) ;
 	~logwindow() ;
 	void ShowUI( void ) ;
+	static void Show( void ) ;
 private slots:
 	void pbClose( void ) ;
 private:

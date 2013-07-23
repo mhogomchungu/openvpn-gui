@@ -23,6 +23,6 @@ FORMS    += \
     logwindow.ui
 
 
-INCLUDEPATH += /home/local/KDE4/include /usr/include /home/ink/src/openvpn-gui/build
+INCLUDEPATH += /home/local/KDE4/include /usr/include /home/ink/src/openvpn-build
 
 LIBS += -lkdeui -L/home/local/KDE4/lib -L/usr/lib

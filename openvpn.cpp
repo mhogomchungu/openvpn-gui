@@ -32,13 +32,13 @@ openvpn::~openvpn()
 
 int openvpn::instanceAlreadyRunning()
 {
-	qDebug() << "intance already running" ;
+	qDebug() << tr( "instance already running" ) ;
 	return 1 ;
 }
 
 int openvpn::autoStartDisabled()
 {
-	qDebug() << "instance already running" ;
+	qDebug() << tr( "instance already running" ) ;
 	return 1 ;
 }
 
@@ -88,6 +88,8 @@ void openvpn::run()
 	this->setVPNstate() ;
 
 	KStatusNotifierItem::setStandardActionsEnabled( false ) ;
+
+	m_configFile = this->getConfigFile() ;
 }
 
 void openvpn::trayIconClicked( bool b,QPoint p )
@@ -96,13 +98,14 @@ void openvpn::trayIconClicked( bool b,QPoint p )
 	Q_UNUSED( p ) ;
 
 	if( m_processIsRunning ){
-		m_processIsRunning = false ;
-		m_process->terminate() ;
+		if( m_process ){
+			m_process->terminate() ;
+		}else{
+			qDebug() << tr( "BUGG!!,trayIconClicked():tried to access a void pointer" ) ;
+		}
 	}else{
 		this->startProcess() ;
 	}
-
-	this->setVPNstate() ;
 }
 
 void openvpn::readyReadStandardOutput()
@@ -112,38 +115,48 @@ void openvpn::readyReadStandardOutput()
 
 void openvpn::showLogOutPut()
 {
-	logwindow * w = new logwindow() ;
-	w->ShowUI() ;
+	logwindow::Show() ;
 }
 
 void openvpn::startProcess()
 {
-	m_process = new QProcess( this ) ;
+	if( m_configFile.isEmpty() ){
+		QString icon = "security-low.png" ;
+		KStatusNotifierItem::setIconByName( icon );
+		KStatusNotifierItem::setAttentionIconByName( icon ) ;
+		KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "Could not find any openvpn configuration file to use" ) ) ;
+		m_configFile = this->getConfigFile() ;
+	}else{
+		m_process = new QProcess( this ) ;
 
-	connect( m_process,SIGNAL( finished( int,QProcess::ExitStatus ) ),this,SLOT( finished( int,QProcess::ExitStatus ) ) ) ;
+		connect( m_process,SIGNAL( finished( int,QProcess::ExitStatus ) ),this,SLOT( finished( int,QProcess::ExitStatus ) ) ) ;
 
-	m_process->setWorkingDirectory( QDir::homePath() + "/.openvpn" ) ;
+		m_process->setWorkingDirectory( QDir::homePath() + "/.openvpn" ) ;
 
-	m_processIsRunning = true ;
+		m_processIsRunning = true ;
 
-	QString arg = QString( OPEN_VPN_CLI_PATH ) + QString( " " ) + this->getConfigFile() ;
+		QString arg = QString( OPEN_VPN_CLI_PATH ) + QString( " " ) + m_configFile ;
 
-	m_process->start( arg,QIODevice::ReadOnly ) ;
+		m_process->start( arg,QIODevice::ReadOnly ) ;
 
-	this->setVPNstate() ;
+		this->setVPNstate() ;
+	}
 }
 
 void openvpn::stopProcess()
 {
 	if( m_processIsRunning ){
-		m_processIsRunning = false ;
-		m_process->terminate() ;
+		if( m_process ){
+			m_process->terminate() ;
+		}else{
+			qDebug() << tr( "BUGG!!,stopProcess():tried to access a void pointer" ) ;
+		}
 	}
 }
 
 void openvpn::processDestroyed( QObject * obj )
 {
-	qDebug() << "process not running" ;
+	qDebug() << tr( "process is not running" ) ;
 	Q_UNUSED( obj ) ;
 }
 
@@ -151,8 +164,12 @@ void openvpn::finished( int i,QProcess::ExitStatus s )
 {
 	Q_UNUSED( i ) ;
 	Q_UNUSED( s ) ;
-	m_process->deleteLater() ;
-	m_process = 0 ;
+	if( m_process ){
+		m_process->deleteLater() ;
+		m_process = 0 ;
+	}else{
+		qDebug() << tr( "BUGG!!,stopProcess():tried to access a void pointer" ) ;
+	}
 	m_processIsRunning = false ;
 	this->setVPNstate() ;
 }
@@ -181,14 +198,6 @@ QString openvpn::getConfigFile()
 		}
 	}
 
-	qDebug() << tr( "quitting there are no config file to use" ) ;
-
-	QString icon = "security-low.png" ;
-	KStatusNotifierItem::setIconByName( icon );
-	KStatusNotifierItem::setAttentionIconByName( icon ) ;
-	KStatusNotifierItem::setToolTip( icon,tr( "Status" ),tr( "could not find openvpn configuration file to use" ) ) ;
-	
-	this->exitApplication() ;
 	return QString( "" ) ;
 }
 

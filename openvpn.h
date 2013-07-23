@@ -59,6 +59,7 @@ private:
 	QProcess * m_process ;
 	bool m_processIsRunning ;
 	KMenu * m_menu ;
+	QString m_configFile ;
 };
 
 #endif // OPENVPN_H

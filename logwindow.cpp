@@ -42,6 +42,12 @@ void logwindow::ShowUI()
 	this->show() ;
 }
 
+void logwindow::Show()
+{
+	logwindow * w = new logwindow() ;
+	w->ShowUI() ;
+}
+
 void logwindow::pbClose()
 {
 	this->hide() ;
