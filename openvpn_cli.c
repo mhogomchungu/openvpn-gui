@@ -15,9 +15,9 @@ static process_t p ;
 static void _exitProcess( int r )
 {
 	if( r ){;}
-	//ProcessTerminate( p ) ;
+	ProcessTerminate( p ) ;
 	//sleep( 1 ) ;
-	ProcessKill( p ) ;
+	//ProcessKill( p ) ;
 }
 
 static void _printProcessOutput( process_t p )
@@ -136,17 +136,7 @@ int main( int argc,char * argv[] )
 	if( !userIsPrivileged() ){
 		return writeToLogFile( "insufficient privileges to run this application.\nMake sure you are a member of group \"openvpn-cli\" and try again" ) ;
 	}
-	
-	/*
-	 * below signal handling part doesnt seem to be necessary
-	 */
-	
-	struct sigaction sa ;
-	memset( &sa,'\0',sizeof( struct sigaction ) ) ;
-	sa.sa_handler = _exitProcess ;
-	sigaction( SIGHUP,&sa,NULL ) ;
-	sigaction( SIGTERM,&sa,NULL ) ;
-	
+		
 	const char * opt_file = argv[ 1 ] ;
 	
 	p = Process( "/usr/sbin/openvpn" ) ;
@@ -156,6 +146,16 @@ int main( int argc,char * argv[] )
 	ProcessSetArgumentList( p,opt_file,ENDLIST ) ;
 	
 	ProcessStart( p ) ;
+		
+	/*
+	 * below signal handling part doesnt seem to be necessary
+	 */
+	
+	struct sigaction sa ;
+	memset( &sa,'\0',sizeof( struct sigaction ) ) ;
+	sa.sa_handler = _exitProcess ;
+	sigaction( SIGHUP,&sa,NULL ) ;
+	sigaction( SIGTERM,&sa,NULL ) ;
 	
 	_printProcessOutput( p ) ;
 	
